@@ -30,17 +30,17 @@ namespace Fuse.NET
     public struct FuseResult<T>
     {
         public T item;
-        public float score;
+        public double score;
         public List<FuseMatch> matches;
     }
     
     public struct SearchKey
     {
         public string name;
-        public float weight;
+        public double weight;
     }
 
-    public delegate int SortFunction(float a, float b);
+    public delegate int SortFunction(double a, double b);
     public delegate object GetFunction(object source, string path);
 
     public class FuseOptions
@@ -54,12 +54,12 @@ namespace Fuse.NET
         public GetFunction getFn;
         public List<SearchKey> keys = new List<SearchKey>();
         public bool verbose = false;
-        public bool tokenize = false;
+        public bool tokenize = true;
         public Regex tokenSeparator = new Regex(" +");
         public bool matchAllTokens = false;
         public int location = 0;
         public int distance = 100;
-        public float threshold = 0.6f;
+        public double threshold = 0.6f;
         public int maxPatternLength = 32;
         public int minMatchCharLength = 1;
         public bool findAllMatches = false;
@@ -96,7 +96,7 @@ namespace Fuse.NET
             return list;
         }
 
-        public void AddKey(string name, float weight = 1f)
+        public void AddKey(string name, double weight = 1f)
         {
             _options.keys.Add(new SearchKey
             {
@@ -200,7 +200,7 @@ namespace Fuse.NET
                 {
                     finalOutput.Add(new FuseResult<T>
                     {
-                        item = (T)result.item
+                        item = ((result.item is int) ? _list[(int)result.item] : (T)result.item),
                     });
 
                     continue;
@@ -217,7 +217,7 @@ namespace Fuse.NET
 
                 finalOutput.Add(new FuseResult<T>
                 {
-                    item = (T)data.item,
+                    item = ((data.item is int)  ? _list[(int)data.item] : (T)data.item),
                     score = data.score,
                     matches = data.matches
                 });
@@ -233,8 +233,8 @@ namespace Fuse.NET
                 var output = search.results[i].output;
                 var scoreLen = output.Count;
 
-                var bestScore = 1f;
-                var curScore = 1f;
+                double bestScore = 1f;
+                double curScore = 1f;
         
                 for (var j = 0; j < scoreLen; j++)
                 {
@@ -253,20 +253,20 @@ namespace Fuse.NET
                     }
                 }
 
-                search.results[i].score = bestScore == 1f ? curScore : bestScore;
+                search.results[i].score = 1f - (bestScore == 1f ? curScore : bestScore);
             }
         }
 
         internal struct TransformData
         {
             public object item;
-            public float score;
+            public double score;
             public List<FuseMatch> matches;
         }
 
         internal class SearchResult
         {
-            public Dictionary<string, float> weights;
+            public Dictionary<string, double> weights;
             public List<AnalyzeResult> results;
         }
 
@@ -302,7 +302,7 @@ namespace Fuse.NET
                 };
             }
 
-            var weights = new Dictionary<string, float>();
+            var weights = new Dictionary<string, double>();
 
             for (var i = 0; i < _list.Count; i++)
             {
@@ -387,18 +387,18 @@ namespace Fuse.NET
 
         internal class AnalyzeMatch
         {
-            public float nScore;
+            public double nScore;
             public string key;
             public int arrayIndex;
             public string value;
-            public float score;
+            public double score;
             public List<List<int>> matchedIndices;
         }
 
         internal class AnalyzeResult
         {
             public object item;
-            public float score;
+            public double score;
             public List<AnalyzeMatch> output;
         }
 
@@ -409,8 +409,8 @@ namespace Fuse.NET
                 return;
             }
 
+            double averageScore = -1f;
             var exists = false;
-            var averageScore = -1f;
             var numTextMatches = 0;
 
             if (opts.value is string)
@@ -420,7 +420,7 @@ namespace Fuse.NET
                 if (_options.tokenize)
                 {
                     var words = _options.tokenSeparator.Split((string)opts.value);
-                    var scores = new List<float>();
+                    var scores = new List<double>();
 
                     for (var i = 0; i < output.tokenSearchers.Count; i++)
                     {
@@ -462,14 +462,14 @@ namespace Fuse.NET
                         averageScore += scores[i];
                     }
 
-                    averageScore = averageScore / scoresLen;
+                    averageScore = averageScore / (double)scoresLen;
                 }
 
                 var finalScore = mainSearchResult.score;
 
                 if (averageScore > -1f)
                 {
-                    finalScore = (finalScore + averageScore) / 2f;
+                    finalScore = (finalScore + averageScore) / (double)2f;
                 }
 
                 var checkTextMatches = (_options.tokenize && _options.matchAllTokens) ? numTextMatches >= output.tokenSearchers.Count : true;

@@ -17,7 +17,7 @@ namespace Fuse.NET
     public struct BitapResult
     {
         public bool isMatch;
-        public float score;
+        public double score;
         public List<List<int>> matchedIndices;
     }
     
@@ -70,7 +70,7 @@ namespace Fuse.NET
                 {
                     matchedIndices = matchedIndices,
                     isMatch = true,
-                    score = 0
+                    score = 1f
                 };
             }
 
@@ -128,9 +128,9 @@ namespace Fuse.NET
             return output;
         }
 
-        private float GetScore(BitapScoreOpts opts)
+        private double GetScore(BitapScoreOpts opts)
         {
-            float accuracy = opts.errors / _pattern.Length;
+            var accuracy = (double)opts.errors / (double)_pattern.Length;
             var proximity = Math.Abs(opts.expectedLocation - opts.currentLocation);
 
             if (opts.distance == 0)
@@ -138,18 +138,19 @@ namespace Fuse.NET
                 return proximity > 0 ? 1f : accuracy;
             }
 
-            return accuracy + (proximity / opts.distance);
+            return accuracy + ((double)proximity / (double)opts.distance);
         }
 
         private BitapResult GetBitapSearch(string text)
         {
             var expectedLocation = _options.location;
             var textLen = text.Length;
-            var currentThreshold = _options.threshold;
             var bestLocation = text.IndexOf(_pattern, expectedLocation);
             var patternLen = _pattern.Length;
             var matchMask = new int[textLen];
-            var score = 0f;
+
+            double currentThreshold = _options.threshold;
+            double score = 0f;
 
             for (var i = 0; i < textLen; i++)
             {
@@ -185,7 +186,7 @@ namespace Fuse.NET
 
             bestLocation = -1;
 
-            float finalScore = 1f;
+            double finalScore = 1f;
             int[] lastBitArr = new int[textLen];
             var binMax = patternLen + textLen;
             var mask = 1 << (patternLen <= 31 ? patternLen - 1 : 30);
@@ -214,7 +215,7 @@ namespace Fuse.NET
                         binMax = binMid;
                     }
 
-                    binMid = (int)Math.Floor((binMax - binMin) / 2f + binMin);
+                    binMid = (int)Math.Floor(((float)binMax - (float)binMin) / 2f + (float)binMin);
                 }
 
                 binMax = binMid;

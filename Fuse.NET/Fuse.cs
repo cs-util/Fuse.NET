@@ -37,7 +37,7 @@ namespace Fuse.NET
     public struct SearchKey
     {
         public string name;
-        public double weight;
+        public double? weight;
     }
 
     public delegate int SortFunction(double a, double b);
@@ -96,7 +96,7 @@ namespace Fuse.NET
             return list;
         }
 
-        public void AddKey(string name, double weight = 1f)
+        public void AddKey(string name, double? weight = null)
         {
             _options.keys.Add(new SearchKey
             {
@@ -253,7 +253,7 @@ namespace Fuse.NET
                     }
                 }
 
-                search.results[i].score = 1f - (bestScore == 1f ? curScore : bestScore);
+                search.results[i].score = (bestScore == 1f ? curScore : bestScore);
             }
         }
 
@@ -291,7 +291,8 @@ namespace Fuse.NET
                         key = "",
                         value = (_list[i] as string),
                         record = i,
-                        index = i
+                        index = i,
+                        arrayIndex = -1
                     }, output);
                 }
 
@@ -310,12 +311,17 @@ namespace Fuse.NET
 
                 for (var j = 0; j < _options.keys.Count; j++)
                 {
+                    var weight = (double)1f;
                     var key = _options.keys[j];
-                    var weight = (1f - key.weight);
 
-                    if (weight == 0f)
+                    if (key.weight.HasValue)
                     {
-                        weight = 1f;
+                        weight = (1f - key.weight.Value);
+
+                        if (weight <= 0f)
+                        {
+                            weight = 1f;
+                        }
                     }
 
                     weights[key.name] = weight;
@@ -325,7 +331,8 @@ namespace Fuse.NET
                         key = key.name,
                         value = _options.getFn(item, key.name),
                         record = item,
-                        index = i
+                        index = i,
+                        arrayIndex = -1
                     }, output);
                 }
             }

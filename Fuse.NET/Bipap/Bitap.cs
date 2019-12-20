@@ -70,7 +70,7 @@ namespace Fuse.NET
                 {
                     matchedIndices = matchedIndices,
                     isMatch = true,
-                    score = 1f
+                    score = 0f
                 };
             }
 
@@ -138,7 +138,7 @@ namespace Fuse.NET
                 return proximity > 0 ? 1f : accuracy;
             }
 
-            return accuracy + ((double)proximity / (double)opts.distance);
+            return 1f - (accuracy + ((double)proximity / (double)opts.distance));
         }
 
         private BitapResult GetBitapSearch(string text)
@@ -187,7 +187,7 @@ namespace Fuse.NET
             bestLocation = -1;
 
             double finalScore = 1f;
-            int[] lastBitArr = new int[textLen];
+            int[] lastBitArr = new int[0];
             var binMax = patternLen + textLen;
             var mask = 1 << (patternLen <= 31 ? patternLen - 1 : 30);
 

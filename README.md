@@ -10,7 +10,7 @@ A lightweight zero-dependency C# port of the Fuse.js fuzzy-search library create
 
 ## Licenses
 
-You can find the original license in the `LICENSE.ORIGINAL` file, and the license for this derivative work in the `LICENSE.DERIVATIVE` file.
+You can find the original license in the `LICENSE.ORIGINAL` file, and the license for this derivative work in the `LICENSE` file.
 
 ## Documentation
 
@@ -21,8 +21,8 @@ At this time there is no documentation for Fuse.NET, but as it is a direct port 
 ```csharp
 public struct Book
 {
-	public string title;
-	public string author;
+    public string title;
+    public string author;
 }
 
 // This test data was taken from the fixtures in Fuse.js.
@@ -30,32 +30,32 @@ var input = new List<Book>();
 
 input.Add(new Book
 {
-	title = "The Code of The Wooster",
-	author = "Bob James"
+    title = "The Code of The Wooster",
+    author = "Bob James"
 });
 
 input.Add(new Book
 {
-	title = "The Wooster Code",
-	author = "Rick Martin"
+    title = "The Wooster Code",
+    author = "Rick Martin"
 });
 
 input.Add(new Book
 {
-	title = "The Code",
-	author = "Jimmy Charles"
+    title = "The Code",
+    author = "Jimmy Charles"
 });
 
 input.Add(new Book
 {
-	title = "Old Man's War",
-	author = "John Scalzi"
+    title = "Old Man's War",
+    author = "John Scalzi"
 });
 
 input.Add(new Book
 {
-	title = "The Lock Artist",
-	author = "Steve Hamilton"
+    title = "The Lock Artist",
+    author = "Steve Hamilton"
 });
 
 var opt = new FuseOptions();
@@ -73,24 +73,28 @@ var output = fuse.Search("woo");
 
 output.ForEach((a) =>
 {
-	Debug.Log(a.item.title + ": " + a.item.author);
-	Debug.Log("Score: " + a.score);
+    Debug.Log(a.item.title + ": " + a.item.author);
+    Debug.Log("Score: " + a.score);
 
-	if (a.matches != null)
-	{
-		a.matches.ForEach((b) =>
-		{
-			Debug.Log("{Match}");
-			Debug.Log(b.key + ": " + b.value + " (Indicies: " + b.indicies.Count + ")");
-		});
-	}
+    if (a.matches != null)
+    {
+        a.matches.ForEach((b) =>
+        {
+            Debug.Log("{Match}");
+            Debug.Log(b.key + ": " + b.value + " (Indicies: " + b.indicies.Count + ")");
+        });
+    }
 });
 ```
 
 ## Installation
 
-Drag and drop the Fuse.NET folder directly into your C# project.
+Using [Nuget](https://www.nuget.org/packages/Fuse.NET/):
+
+```powershell
+Install-Package Fuse.NET -Version 0.1.0
+``` 
 
 ## Contributing
 
-Contributions are welcome, if you have one to make please don't hestitate to create a pull request.
+Contributions are welcome, if you have one to make please don't hesitate to create a pull request.

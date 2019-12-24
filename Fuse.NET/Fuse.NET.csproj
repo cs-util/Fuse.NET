@@ -6,10 +6,10 @@
     <Authors>kurozael</Authors>
     <Summary>A fuzzy search implementation using the Bitap algorithm</Summary>
     <Description>A lightweight zero-dependency C# port of the Fuse.js fuzzy-search library created by @krisk (https://github.com/krisk/Fuse). I ported this to C# because I couldn't find anything like it, and because I love Fuse.js.</Description>
-    <PackageLicenseUrl>https://https://raw.githubusercontent.com/kurozael/Fuse.NET/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/kurozael/Fuse.NET</PackageProjectUrl>
     <PackageIcon>icon.png</PackageIcon>
-    <PackageIconUrl />
+    <PackageIconUrl>https://raw.githubusercontent.com/kurozael/Fuse.NET/master/icon.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/kurozael/Fuse.NET</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>fuzzy-search weighted-search bitap</PackageTags>
@@ -22,10 +22,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\LICENSE">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
     <None Include="..\icon.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
